@@ -2,7 +2,7 @@
   "Environment": {
     "Variables": {
       "ENVIRONMENT": "dev",
-      "REGION": "us-east-1"
+      "REGION": "us-east-2"
     }
   }
 }
