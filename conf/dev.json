@@ -1,0 +1,8 @@
+{
+  "Environment": {
+    "Variables": {
+      "ENVIRONMENT": "dev",
+      "REGION": "us-east-1"
+    }
+  }
+}
