@@ -20,12 +20,12 @@ def client() -> LambdaClient:
 
 
 @pytest.mark.parametrize(
-    "env,store,exp_type,exp_reg",
+    "env,store,exp_reg",
     [
-        ("dev", "0020", str, r"^192\.168\.1\.\d{1,3}$"),
-        ("dev", "*", list, r"^192\.168\.1\.\d{1,3}$"),
-        # ("prod", "0020", str, r"^192\.168\.100\.\d{1,3}$"),
-        # ("prod", "*", list, r"^192\.168\.100\.\d{1,3}$"),
+        ("dev", "0020", r"^192\.168\.1\.\d{1,3}$"),
+        ("dev", "*", r"^192\.168\.1\.\d{1,3}$"),
+        # ("prod", "0020",  r"^192\.168\.100\.\d{1,3}$"),
+        # ("prod", "*",  r"^192\.168\.100\.\d{1,3}$"),
     ],
 )
 def test_invoke(
@@ -33,10 +33,9 @@ def test_invoke(
     fn: str,
     env: str,
     store: str,
-    exp_type: Type,
     exp_reg: str,
 ):
-    print("params:", fn, env, store, exp_type, exp_reg)
+    print("params:", fn, env, store, exp_reg)
 
     payload = json.dumps({"business": "first", "store": store})
     print("payload:", payload)
@@ -49,13 +48,14 @@ def test_invoke(
 
     value = json.loads(raw.get("body", "{}")).get("value")
     print("value:", value)
-    print("value.type", type(value))
 
     assert value is not None
-    assert isinstance(value, exp_type)
+    assert isinstance(value, list)
 
-    if isinstance(value, list):
-        for host in value:
-            assert re.match(exp_reg, host)
+    if store == "*":
+        assert len(value) > 1
     else:
-        assert re.match(exp_reg, value)
+        assert len(value) == 1
+
+    for host in value:
+        assert re.match(exp_reg, host)

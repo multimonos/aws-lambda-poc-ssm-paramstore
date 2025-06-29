@@ -80,7 +80,7 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
         if params.store == "*":
             value = get_all_hosts(ssm, ENV, params.business)
         else:
-            value = get_store_host(ssm, ENV, params.business, params.store)
+            value = [get_store_host(ssm, ENV, params.business, params.store)]
 
         return success_response(
             200,
