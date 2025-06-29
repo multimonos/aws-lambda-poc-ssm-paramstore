@@ -10,6 +10,9 @@ src=src
 dist=dist
 target=dist/target.zip
 
+# other
+payload?=one
+
 default: # noop
 	@echo "env : $(env)" \
 	&& echo "fn  : $(fn)"   \
@@ -40,7 +43,7 @@ validate:
 	@make default
 
 invoke: validate
-	@aws lambda invoke --function-name $(fn) --payload fileb://data/payload-one.json res.json && cat res.json |jq
+	@aws lambda invoke --function-name $(fn) --payload fileb://data/payload-$(payload).json res.json && cat res.json |jq
 
 deploy: validate prepare
 	aws lambda update-function-code --function-name $(fn) --zip-file fileb://$(target) --no-cli-pager \
