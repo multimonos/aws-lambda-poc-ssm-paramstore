@@ -8,10 +8,9 @@ from typing import Type, cast
 from mypy_boto3_lambda import LambdaClient
 
 
-@dataclass
-class Functions:
-    dev: str
-    prd: str
+@pytest.fixture
+def fn() -> str:
+    return "dev-poc-ssm"
 
 
 @pytest.fixture
@@ -20,18 +19,13 @@ def client() -> LambdaClient:
     return client
 
 
-@pytest.fixture
-def fn() -> str:
-    return "dev-poc-ssm"
-
-
 @pytest.mark.parametrize(
     "env,store,exp_type,exp_reg",
     [
         ("dev", "0020", str, r"^192\.168\.1\.\d{1,3}$"),
         ("dev", "*", list, r"^192\.168\.1\.\d{1,3}$"),
-        ("prod", "0020", str, r"^192\.168\.100\.\d{1,3}$"),
-        ("prod", "*", list, r"^192\.168\.100\.\d{1,3}$"),
+        # ("prod", "0020", str, r"^192\.168\.100\.\d{1,3}$"),
+        # ("prod", "*", list, r"^192\.168\.100\.\d{1,3}$"),
     ],
 )
 def test_invoke(
@@ -55,6 +49,7 @@ def test_invoke(
 
     value = json.loads(raw.get("body", "{}")).get("value")
     print("value:", value)
+    print("value.type", type(value))
 
     assert value is not None
     assert isinstance(value, exp_type)

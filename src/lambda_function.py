@@ -84,7 +84,7 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
 
         return success_response(
             200,
-            {"message": "ok", "value": json.dumps(value), "payload": params.__dict__},
+            {"message": "ok", "value": value, "payload": params.__dict__},
         )
 
     except ssm.exceptions.ParameterNotFound:
