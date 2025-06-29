@@ -1,5 +1,3 @@
-from ast import expr
-from math import exp
 import re
 from dataclasses import dataclass
 import pytest
@@ -23,18 +21,8 @@ def client() -> LambdaClient:
 
 
 @pytest.fixture
-def fns() -> dict[str, str]:
-    dev = os.environ.get("DEV_FN", "")
-    if not dev:
-        raise ValueError("Missing env variable 'DEV_FN'")
-    print(dev)
-
-    prd = os.environ.get("PRD_FN", "")
-    if not prd:
-        raise ValueError("Missing env variable 'PRD_FN'")
-    print(prd)
-
-    return {"prd": prd, "dev": dev}
+def fn() -> str:
+    return "dev-poc-ssm"
 
 
 @pytest.mark.parametrize(
@@ -42,23 +30,18 @@ def fns() -> dict[str, str]:
     [
         ("dev", "0020", str, r"^192\.168\.1\.\d{1,3}$"),
         ("dev", "*", list, r"^192\.168\.1\.\d{1,3}$"),
-        ("prd", "0020", str, r"^192\.168\.100\.\d{1,3}$"),
-        ("prd", "*", list, r"^192\.168\.100\.\d{1,3}$"),
+        ("prod", "0020", str, r"^192\.168\.100\.\d{1,3}$"),
+        ("prod", "*", list, r"^192\.168\.100\.\d{1,3}$"),
     ],
 )
 def test_invoke(
     client: LambdaClient,
-    fns: dict[str, str],
+    fn: str,
     env: str,
     store: str,
     exp_type: Type,
     exp_reg: str,
 ):
-    # fn = fns.get(env)
-    print("\n")
-    print("fns:", fns)
-
-    fn = fns[env]
     print("params:", fn, env, store, exp_type, exp_reg)
 
     payload = json.dumps({"business": "first", "store": store})
